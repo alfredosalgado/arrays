@@ -1,54 +1,61 @@
-function renderizarPropiedades(propiedades, contenedor, limite = propiedades.length) {
-  const container = document.querySelector(contenedor);
-  if (!container) {
-    console.error(`Contenedor no encontrado: ${contenedor}`);
-    return;
+let html = "";
+
+// Función para recorrer un arreglo y generar el HTML
+const recorrerArray = (arreglo, cantidad) => {
+  html = "";
+  const limite = cantidad > 0 ? 3 : arreglo.length;
+  for (let i = 0; i < limite; i++) {
+    generarHTML(arreglo[i]);
   }
+};
 
-  let html = "";
-
-  for (let i = 0; i < Math.min(propiedades.length, limite); i++) {
-    const prop = propiedades[i];
-    const mensajeFumar = prop.smoke
-      ? '<p class="text-success"><i class="fas fa-smoking"></i> Permitido fumar</p>'
-      : '<p class="text-danger"><i class="fas fa-smoking-ban"></i> No se permite fumar</p>';
-    const mensajeMascotas = prop.pets
-      ? '<p class="text-success"><i class="fas fa-paw"></i> Mascotas permitidas</p>'
-      : '<p class="text-danger"><i class="fas fa-ban"></i> No se permiten mascotas</p>';
-
-    html += `
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <img src="${prop.src}" class="card-img-top" alt="${prop.nombre}" />
-          <div class="card-body">
-            <h5 class="card-title">${prop.nombre}</h5>
-            <p class="card-text">${prop.descripcion}</p>
-            <p><i class="fas fa-map-marker-alt"></i> ${prop.ubicacion}</p>
-            <p><i class="fas fa-bed"></i> ${prop.habitaciones} Habitaciones</p>
-            <p><i class="fas fa-dollar-sign"></i> $${prop.costo}</p>
-            ${mensajeFumar}
-            ${mensajeMascotas}
+// Función para generar el HTML de una propiedad
+const generarHTML = (propiedad) => {
+  html += `
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img src=${propiedad.src} class="card-img-top" alt="Imagen de ${propiedad.nombre}" />
+            <div class="card-body">
+              <h5 class="card-title">${propiedad.nombre}</h5>
+              <p class="card-text">${propiedad.descripcion}</p>
+              <p><i class="fas fa-map-marker-alt"></i> ${propiedad.ubicacion}</p>
+              <p><i class="fas fa-bed"></i> ${propiedad.habitaciones} Habitaciones</p>
+              <p><i class="fas fa-dollar-sign"></i> $${propiedad.costo}</p>
+              ${
+                propiedad.smoke
+                  ? `<p class="text-success"><i class="fas fa-smoking"></i> Permitido fumar</p>`
+                  : `<p class="text-danger"><i class="fas fa-smoking-ban"></i> No se permite fumar</p>`
+              }
+              ${
+                propiedad.pets
+                  ? `<p class="text-success"><i class="fas fa-paw"></i> Mascotas permitidas</p>`
+                  : `<p class="text-danger"><i class="fa-solid fa-ban"></i> No se permiten mascotas</p>`
+              }
+            </div>
           </div>
         </div>
-      </div>
     `;
-  }
+};
 
-  container.innerHTML = html;
-}
+// Función para renderizar las propiedades en un contenedor
+const renderizarPropiedades = (arreglo, contenedor, cantidad) => {
+  recorrerArray(arreglo, cantidad);
+  document.querySelector(contenedor).innerHTML = html;
+};
 
+// Lógica de ejecución al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
   if (document.querySelector("#venta")) {
-    // Detectar si estamos en el index o en propiedades_venta.html
+    // Detecta si estamos en el index.html (3 propiedades) o en propiedades_venta.html (todas las propiedades)
     const esIndex = document.querySelector("body").classList.contains("index");
-    const limite = esIndex ? 3 : propiedades_venta.length;
-    renderizarPropiedades(propiedades_venta, "#venta .row", limite);
+    const cantidad = esIndex ? 3 : 0;
+    renderizarPropiedades(propiedades_venta, "#venta .row", cantidad);
   }
 
   if (document.querySelector("#alquiler")) {
-    // Detectar si estamos en el index o en propiedades_alquiler.html
+    // Detecta si estamos en el index.html (3 propiedades) o en propiedades_alquiler.html (todas las propiedades)
     const esIndex = document.querySelector("body").classList.contains("index");
-    const limite = esIndex ? 3 : propiedades_alquiler.length;
-    renderizarPropiedades(propiedades_alquiler, "#alquiler .row", limite);
+    const cantidad = esIndex ? 3 : 0;
+    renderizarPropiedades(propiedades_alquiler, "#alquiler .row", cantidad);
   }
 });
